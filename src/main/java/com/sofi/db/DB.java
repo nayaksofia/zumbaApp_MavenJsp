@@ -9,26 +9,37 @@ import java.sql.ResultSet;
 
 public class DB {
 	
-	public Connection connection;
+	public Connection con;
 
-	// Create object of DB
+	// Create object of DB: Singleton instance
 	private static DB db = new DB();
 
 	private DB() {
 		try {
 
 			Class.forName("com.mysql.cj.jdbc.Driver");
+			System.out.println("[DB] Driver Loaded!!!");
+			
 			String url = "jdbc:mysql://localhost:3306/zumba";// Database path
 			String user = "root";
 			String password = "root";
-			connection = DriverManager.getConnection(url, user, password);
+			con = DriverManager.getConnection(url, user, password);
+			System.out.println("[DB] Connection Created!!!");
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	// insert , update , delete
+	// Lazy initialization of the singleton instance
+    public static DB getDB() {
+        if (db == null) {
+            db = new DB();
+        }
+        return db;
+    }
+	
+	// Execute insert , update , delete
 	public int executeUpdate(PreparedStatement statement) {
 		int result = 0;
 
@@ -55,13 +66,13 @@ public class DB {
 		return set;
 	}
 
-	public static DB getDB() {
-		return db;
-	}
+	
 
+	//Close Connection
 	public void closeConnection() {
 		try {
-			connection.close();
+			con.close();
+			System.out.println("[DB] Connection Closed!!!");
 
 		} catch (Exception e) {
 			e.printStackTrace();

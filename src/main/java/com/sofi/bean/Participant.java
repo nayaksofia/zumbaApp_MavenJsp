@@ -2,26 +2,30 @@ package com.sofi.bean;
 
 public class Participant {
 
-	//Field declaration
+	//Field declaration :: pid, name, age, email, password
 		private int pid;
 		private String name;
 		private int age;
 		private String email;
+		private String password;
 		
 		//Non-parameterized constructor
 		public Participant() {
 			
 		}
-
-	    //Parameterized constructor
-		public Participant(int pid, String name, int age, String email) {
+        
+		//Parameterized Constructor
+		public Participant(int pid, String name, int age, String email, String password) {
+			super();
 			this.pid = pid;
 			this.name = name;
 			this.age = age;
 			this.email = email;
+			this.password = password;
 		}
-	    
-		//Generate getter and setter
+		
+		//Getter and Setter 
+
 		public int getPid() {
 			return pid;
 		}
@@ -53,12 +57,23 @@ public class Participant {
 		public void setEmail(String email) {
 			this.email = email;
 		}
-		
-		//Generate toString method
 
+		public String getPassword() {
+			return password;
+		}
+
+		public void setPassword(String password) {
+			this.password = password;
+		}
+
+		//toString Method , exclude password for security 
 		@Override
 		public String toString() {
-			return "Participant [pid=" + pid + ", name=" + name + ", age=" + age + ", email=" + email + "]";
+			return "Participant [pid=" + pid + ", name=" + name + ", age=" + age + ", email=" + email + 
+					"]";
 		}
 		
+		
+
+	   
 }
