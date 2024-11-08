@@ -13,7 +13,6 @@ import com.sofi.db.DB;
 public class ParticipantDAO {
 
 	Connection con;
-	PreparedStatement ps;
 
 	public ParticipantDAO() {
 		// Initialize the connection
@@ -22,28 +21,17 @@ public class ParticipantDAO {
 
 	// Insert Participant
 	public int addParticipant(Participant p) throws ClassNotFoundException, SQLException {
-		int result = 0;
 
-		try {
-			String sql = "insert into Participant(name, age, email, password) values (?,?,?,?)";
-			ps = con.prepareStatement(sql);
+		String sql = "insert into Participant(name, age, email, password) values (?,?,?,?)";
+		try (PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setString(1, p.getName());
 			ps.setInt(2, p.getAge());
 			ps.setString(3, p.getEmail());
 			ps.setString(4, p.getPassword());
 
-			result = ps.executeUpdate();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (ps != null) {
-				ps.close();
-			}
+			return ps.executeUpdate();
 		}
-
-		return result;
 	}
 
 	// Retrieve All Participants
@@ -51,12 +39,9 @@ public class ParticipantDAO {
 
 		ArrayList<Participant> participants = new ArrayList<Participant>();
 
-		try {
+		String sql = "select * from Participant";
 
-			String sql = "select * from Participant";
-			ps = con.prepareStatement(sql);
-
-			ResultSet rs = ps.executeQuery();
+		try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
 			while (rs.next()) {
 				Participant p = new Participant();
@@ -69,15 +54,6 @@ public class ParticipantDAO {
 
 				participants.add(p);
 			}
-
-			rs.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (ps != null) {
-				ps.close();
-			}
 		}
 
 		return participants;
@@ -86,49 +62,37 @@ public class ParticipantDAO {
 	// Retrieve Participants By pid
 	public Participant fetchParticipantById(int id) throws ClassNotFoundException, SQLException {
 
-		Participant p = null;
-		try {
+		String sql = "select * from Participant where pid = ?";
 
-			String sql = "select * from Participant where pid = ?";
+		try (PreparedStatement ps = con.prepareStatement(sql)) {
 
-			ps = con.prepareStatement(sql);
 			ps.setInt(1, id); // passing parameter id
 
-			ResultSet rs = ps.executeQuery();
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
 
-			while (rs.next()) {
-				p = new Participant(); // Create object of Participant
+					Participant p = new Participant(); // Create object of Participant
 
-				p.setPid(rs.getInt("pid"));
-				p.setName(rs.getString("name"));
-				p.setAge(rs.getInt("age"));
-				p.setEmail(rs.getString("email"));
-				p.setPassword(rs.getString("password"));
-			}
+					p.setPid(rs.getInt("pid"));
+					p.setName(rs.getString("name"));
+					p.setAge(rs.getInt("age"));
+					p.setEmail(rs.getString("email"));
+					p.setPassword(rs.getString("password"));
 
-			rs.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (ps != null) {
-				ps.close();
+					return p;
+				}
 			}
 		}
 
-		return p;
+		return null;
 	}
 
 	// Update Participant By pid
 
 	public int updateParticipant(Participant p) throws ClassNotFoundException, SQLException {
-		int result = 0;
 
-		try {
-
-			String sql = "update Participant set name=?, age=?, email=?, password=? where pid =?";
-
-			ps = con.prepareStatement(sql);
+		String sql = "update Participant set name=?, age=?, email=?, password=? where pid =?";
+		try (PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setString(1, p.getName());
 			ps.setInt(2, p.getAge());
@@ -136,52 +100,30 @@ public class ParticipantDAO {
 			ps.setString(4, p.getPassword());
 			ps.setInt(5, p.getPid());
 
-			result = ps.executeUpdate();
+			return ps.executeUpdate();
 
-		} catch (Exception e) {
-
-			e.printStackTrace();
-
-		} finally {
-			if (ps != null) {
-				ps.close();
-			}
 		}
-
-		return result;
 	}
 
 	// Delete
 
 	public int deleteParticipant(int id) throws ClassNotFoundException, SQLException {
 
-		int result = 0;
+		String sql = "delete from Participant where pid= ?";
 
-		try {
-
-			String sql = "delete from Participant where pid= ?";
-			ps = con.prepareStatement(sql);
+		try (PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setInt(1, id); // Set parameter value
 
-			result = ps.executeUpdate();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (ps != null) {
-				ps.close();
-			}
+			return ps.executeUpdate();
 		}
-
-		return result;
 	}
 
 }
 
-/* Notes: Exception Handling try..catch block
- * -----------------
- * No need of repeating catch and finally block repeatedly.
- * Using of try-with-resources : closes automatically the statements and result sets after execution
- * Make the code more cleaner 
+/*
+ * Notes: Exception Handling try..catch block ----------------- No need of
+ * repeating catch and finally block repeatedly. Using of try-with-resources :
+ * closes automatically the statements and result sets after execution Make the
+ * code more cleaner
  */
