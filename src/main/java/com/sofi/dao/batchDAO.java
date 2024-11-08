@@ -11,49 +11,34 @@ import java.util.ArrayList;
 import com.sofi.bean.Batch;
 import com.sofi.db.DB;
 
-/* Notes: Exception Handling try..catch block
- * -----------------
- * No need of repeating catch and finally block repeatedly.
- * Using of try-with-resources : closes automatically the statements and result sets after execution
- * Make the code more cleaner 
- */
+
 
 //Manages CRUD operations for the Batch table
 public class BatchDAO {
 
 	Connection con;
-	PreparedStatement ps;
 
 	public BatchDAO() {
-		// Initialize the connection
-		con = DB.getDB().con;
+
+		con = DB.getDB().con; // Initialize the connection
 	}
 
 	// Insert Batches
 	public int addBatch(Batch batch) throws ClassNotFoundException, SQLException {
-		int result = 0;
 
-		try {
-			String sql = "insert into Batch(instructor, date, schedule, time) values ( ?,?,?,?)";
-			ps = con.prepareStatement(sql);
+		String sql = "insert into Batch(instructor, date, schedule, time) values ( ?,?,?,?)";
+
+		//try-with-resources
+		try (PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setString(1, batch.getInstructor());
 			ps.setDate(2, Date.valueOf(batch.getDate()));
 			ps.setString(3, batch.getSchedule());
 			ps.setTime(4, Time.valueOf(batch.getTime()));
 
-			result = ps.executeUpdate();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return 0;
-		} finally {
-			if (ps != null) {
-				ps.close();
-			}
+			return ps.executeUpdate();
 		}
 
-		return result;
 	}
 
 	// Retrieve All Batch Data From Database
@@ -62,13 +47,10 @@ public class BatchDAO {
 
 		ArrayList<Batch> batches = new ArrayList<Batch>();
 
-		try {
+		String sql = "select * from Batch";
 
-			String sql = "select * from Batch";
-
-			ps = con.prepareStatement(sql);
-
-			ResultSet rs = ps.executeQuery();
+		//try-with-resources
+		try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
 			while (rs.next()) {
 				Batch batch = new Batch();
@@ -81,15 +63,6 @@ public class BatchDAO {
 
 				batches.add(batch);
 			}
-
-			rs.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (ps != null) {
-				ps.close();
-			}
 		}
 
 		return batches;
@@ -98,48 +71,37 @@ public class BatchDAO {
 	// Retrieve Batch data By bid
 	public Batch fetchBatchById(int id) throws ClassNotFoundException, SQLException {
 
-		Batch batch = null;
-		try {
+		String sql = "select * from Batch where bid = ?";
 
-			String sql = "select * from Batch where bid = ?";
-
-			ps = con.prepareStatement(sql);
+		//try-with-resources
+		try (PreparedStatement ps = con.prepareStatement(sql)) {
 			ps.setInt(1, id);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					Batch batch = new Batch();
 
-			ResultSet rs = ps.executeQuery();
+					batch.setBid(rs.getInt("bid"));
+					batch.setInstructor(rs.getString("instructor"));
+					batch.setDate(rs.getDate("date").toLocalDate());
+					batch.setSchedule(rs.getString("schedule"));
+					batch.setTime(rs.getTime("time").toLocalTime());
 
-			while (rs.next()) {
-				batch = new Batch();
+					return batch;
+				}
 
-				batch.setBid(rs.getInt("bid"));
-				batch.setInstructor(rs.getString("instructor"));
-				batch.setDate(rs.getDate("date").toLocalDate());
-				batch.setSchedule(rs.getString("schedule"));
-				batch.setTime(rs.getTime("time").toLocalTime());
-			}
-			rs.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (ps != null) {
-				ps.close();
 			}
 		}
 
-		return batch;
+		return null;
 	}
 
 	// Update By Id
 	public int updateBatch(Batch batch) throws ClassNotFoundException, SQLException {
 
-		int result = 0;
+		String sql = "update Batch set  instructor=?, date=?, schedule=? , time =? where bid =?";
 
-		try {
-
-			String sql = "update Batch set  instructor=?, date=?, schedule=? , time =? where bid =?";
-
-			ps = con.prepareStatement(sql);
+		//try-with-resources
+		try (PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setString(1, batch.getInstructor());
 
@@ -151,43 +113,30 @@ public class BatchDAO {
 
 			ps.setInt(5, batch.getBid());
 
-			result = ps.executeUpdate();
+			return ps.executeUpdate();
 
-		} catch (Exception e) {
-
-			e.printStackTrace();
-
-		} finally {
-			if (ps != null) {
-				ps.close();
-			}
 		}
-
-		return result;
 	}
 
 	// Delete
 	public int deleteBatch(int id) throws ClassNotFoundException, SQLException {
 
-		int result = 0;
+		String sql = "delete from Batch where bid= ?";
 
-		try {
-
-			String sql = "delete from Batch where bid= ?";
-			ps = con.prepareStatement(sql);
+		//try-with-resources
+		try (PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setInt(1, id);
 
-			result = ps.executeUpdate();
+			return ps.executeUpdate();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (ps != null) {
-				ps.close();
-			}
 		}
-
-		return result;
 	}
 }
+
+/* Notes: Exception Handling try..catch block
+ * -----------------
+ * No need of repeating catch and finally block repeatedly.
+ * Using of try-with-resources : closes automatically the statements and result sets after execution
+ * Make the code more cleaner 
+ */
