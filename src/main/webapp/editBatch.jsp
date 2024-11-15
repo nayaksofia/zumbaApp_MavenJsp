@@ -18,7 +18,7 @@
  %>
 
 <div class="container mt-5">
-    <h3 class="text-center">Add Batch</h3>
+    <h3 class="text-center">Edit Batch</h3>
     
     <form action="editBatchController.jsp" class="mt-4">
     
