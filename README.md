@@ -43,4 +43,4 @@ This application is designed to manage the enrollment and scheduling of students
 
 ## Block Diagram
 
-![ZumbaApp](images/ZumbaAppBlockDiagram.jpg)
+
