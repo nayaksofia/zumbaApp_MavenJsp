@@ -41,3 +41,6 @@ This application is designed to manage the enrollment and scheduling of students
 6. **Log in as User**:
    - After admin registration, users can log in with their email and password to register for batches.
 
+## Block Diagram
+
+![ZumbaApp](images/ZumbaAppBlockDiagram.jpg)
