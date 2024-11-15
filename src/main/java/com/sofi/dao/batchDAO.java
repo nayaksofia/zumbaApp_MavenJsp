@@ -16,12 +16,6 @@ import com.sofi.db.DB;
 //Manages CRUD operations for the Batch table
 public class BatchDAO {
 
-	Connection con;
-
-	public BatchDAO() {
-
-		con = DB.getDB().con; // Initialize the connection
-	}
 
 	// Insert Batches
 	public int addBatch(Batch batch) throws ClassNotFoundException, SQLException {
@@ -29,12 +23,13 @@ public class BatchDAO {
 		String sql = "insert into Batch(instructor, date, schedule, time) values ( ?,?,?,?)";
 
 		//try-with-resources
-		try (PreparedStatement ps = con.prepareStatement(sql)) {
+		try (  Connection con = DB.getDB().getConnection();
+				PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setString(1, batch.getInstructor());
-			ps.setDate(2, Date.valueOf(batch.getDate()));
+			ps.setDate(2, batch.getDate());
 			ps.setString(3, batch.getSchedule());
-			ps.setTime(4, Time.valueOf(batch.getTime()));
+			ps.setTime(4, batch.getTime());
 
 			return ps.executeUpdate();
 		}
@@ -50,16 +45,18 @@ public class BatchDAO {
 		String sql = "select * from Batch";
 
 		//try-with-resources
-		try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+		try (   Connection con = DB.getDB().getConnection();
+				PreparedStatement ps = con.prepareStatement(sql); 
+				ResultSet rs = ps.executeQuery()) {
 
 			while (rs.next()) {
 				Batch batch = new Batch();
 
 				batch.setBid(rs.getInt("bid"));
 				batch.setInstructor(rs.getString("instructor"));
-				batch.setDate(rs.getDate("date").toLocalDate());
+				batch.setDate(rs.getDate("date"));
 				batch.setSchedule(rs.getString("schedule"));
-				batch.setTime(rs.getTime("time").toLocalTime());
+				batch.setTime(rs.getTime("time"));
 
 				batches.add(batch);
 			}
@@ -74,7 +71,8 @@ public class BatchDAO {
 		String sql = "select * from Batch where bid = ?";
 
 		//try-with-resources
-		try (PreparedStatement ps = con.prepareStatement(sql)) {
+		try (   Connection con = DB.getDB().getConnection();
+				PreparedStatement ps = con.prepareStatement(sql)) {
 			ps.setInt(1, id);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
@@ -82,9 +80,9 @@ public class BatchDAO {
 
 					batch.setBid(rs.getInt("bid"));
 					batch.setInstructor(rs.getString("instructor"));
-					batch.setDate(rs.getDate("date").toLocalDate());
+					batch.setDate(rs.getDate("date"));
 					batch.setSchedule(rs.getString("schedule"));
-					batch.setTime(rs.getTime("time").toLocalTime());
+					batch.setTime(rs.getTime("time"));
 
 					return batch;
 				}
@@ -101,15 +99,16 @@ public class BatchDAO {
 		String sql = "update Batch set  instructor=?, date=?, schedule=? , time =? where bid =?";
 
 		//try-with-resources
-		try (PreparedStatement ps = con.prepareStatement(sql)) {
+		try (  Connection con = DB.getDB().getConnection();
+				PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setString(1, batch.getInstructor());
 
-			ps.setDate(2, Date.valueOf(batch.getDate()));
+			ps.setDate(2, batch.getDate());
 
 			ps.setString(3, batch.getSchedule());
 
-			ps.setTime(4, Time.valueOf(batch.getTime()));
+			ps.setTime(4, batch.getTime());
 
 			ps.setInt(5, batch.getBid());
 
@@ -124,7 +123,8 @@ public class BatchDAO {
 		String sql = "delete from Batch where bid= ?";
 
 		//try-with-resources
-		try (PreparedStatement ps = con.prepareStatement(sql)) {
+		try (  Connection con = DB.getDB().getConnection();
+				PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setInt(1, id);
 

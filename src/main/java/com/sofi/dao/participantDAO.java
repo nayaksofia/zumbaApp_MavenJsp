@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+
 import com.sofi.bean.Participant;
 import com.sofi.db.DB;
 
@@ -12,18 +14,14 @@ import com.sofi.db.DB;
 
 public class ParticipantDAO {
 
-	Connection con;
-
-	public ParticipantDAO() {
-		// Initialize the connection
-		con = DB.getDB().con;
-	}
 
 	// Insert Participant
 	public int addParticipant(Participant p) throws ClassNotFoundException, SQLException {
 
 		String sql = "insert into Participant(name, age, email, password) values (?,?,?,?)";
-		try (PreparedStatement ps = con.prepareStatement(sql)) {
+		
+		try (   Connection con = DB.getDB().getConnection();
+				PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setString(1, p.getName());
 			ps.setInt(2, p.getAge());
@@ -35,13 +33,15 @@ public class ParticipantDAO {
 	}
 
 	// Retrieve All Participants
-	public ArrayList<Participant> fetchAllParticipants() throws ClassNotFoundException, SQLException {
+	public List<Participant> fetchAllParticipants() throws ClassNotFoundException, SQLException {
 
-		ArrayList<Participant> participants = new ArrayList<Participant>();
+		List<Participant> participants = new ArrayList<Participant>();
 
 		String sql = "select * from Participant";
 
-		try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+		try (   Connection con = DB.getDB().getConnection();
+				PreparedStatement ps = con.prepareStatement(sql); 
+				ResultSet rs = ps.executeQuery()) {
 
 			while (rs.next()) {
 				Participant p = new Participant();
@@ -64,7 +64,8 @@ public class ParticipantDAO {
 
 		String sql = "select * from Participant where pid = ?";
 
-		try (PreparedStatement ps = con.prepareStatement(sql)) {
+		try (   Connection con = DB.getDB().getConnection();
+				PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setInt(1, id); // passing parameter id
 
@@ -92,7 +93,8 @@ public class ParticipantDAO {
 	public int updateParticipant(Participant p) throws ClassNotFoundException, SQLException {
 
 		String sql = "update Participant set name=?, age=?, email=?, password=? where pid =?";
-		try (PreparedStatement ps = con.prepareStatement(sql)) {
+		try (   Connection con = DB.getDB().getConnection();
+				PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setString(1, p.getName());
 			ps.setInt(2, p.getAge());
@@ -111,19 +113,26 @@ public class ParticipantDAO {
 
 		String sql = "delete from Participant where pid= ?";
 
-		try (PreparedStatement ps = con.prepareStatement(sql)) {
+		try (   Connection con = DB.getDB().getConnection();
+				PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setInt(1, id); // Set parameter value
 
 			return ps.executeUpdate();
 		}
 	}
-
+	
 }
 
 /*
- * Notes: Exception Handling try..catch block ----------------- No need of
- * repeating catch and finally block repeatedly. Using of try-with-resources :
- * closes automatically the statements and result sets after execution Make the
+ * Notes: 
+ * 
+ * Exception Handling try..catch block 
+ * ----------------- 
+ * No need of repeating catch and finally block repeatedly. 
+ * 
+ * Using of try-with-resources :
+ * -----------------
+ * closes automatically the statements and result sets after execution and Make the
  * code more cleaner
  */

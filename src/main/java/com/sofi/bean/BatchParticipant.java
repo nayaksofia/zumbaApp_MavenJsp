@@ -1,18 +1,18 @@
 package com.sofi.bean;
 
-public class ParticipantBatch {
+public class BatchParticipant {
 
 	//Field declaration
 	private int pid;
     private int bid;
   
     //Generate non-parameterized constructor
-	public ParticipantBatch() {
+	public BatchParticipant() {
 		
 	}
 	
 	//Generate parameterized constructor
-	public ParticipantBatch(int pid, int bid) {
+	public BatchParticipant(int pid, int bid) {
 		
 		this.pid = pid;
 		this.bid = bid;

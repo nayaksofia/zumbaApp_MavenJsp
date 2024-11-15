@@ -1,7 +1,78 @@
-<!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://jakarta.ee/xml/ns/jakartaee" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd" id="WebApp_ID" version="5.0">
 
-<web-app>
-  <display-name>Archetype Created Web Application</display-name>
+  <display-name>zumbaApp</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  
+    <servlet>
+    <description></description>
+    <display-name>WelcomeAdminController</display-name>
+    <servlet-name>WelcomeAdminController</servlet-name>
+    <servlet-class>com.sofi.controller.WelcomeAdminController</servlet-class>
+   </servlet>
+  <servlet-mapping>
+    <servlet-name>WelcomeAdminController</servlet-name>
+    <url-pattern>/WelcomeAdminController</url-pattern>
+    <url-pattern>/WelcomeAdmin</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet>
+    <description></description>
+    <display-name>AddParticipantController</display-name>
+    <servlet-name>AddParticipantController</servlet-name>
+    <servlet-class>com.sofi.controller.AddParticipantController</servlet-class>
+   </servlet>
+  <servlet-mapping>
+    <servlet-name>AddParticipantController</servlet-name>
+    <url-pattern>/AddParticipantController</url-pattern>
+    <url-pattern>/AddParticipant</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet>
+    <description></description>
+    <display-name>LogoutServlet</display-name>
+    <servlet-name>LogoutServlet</servlet-name>
+    <servlet-class>com.sofi.controller.LogoutServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+   <servlet-name>LogoutServlet</servlet-name>
+   <url-pattern>/LogoutServlet</url-pattern>
+   <url-pattern>/Logout</url-pattern>
+   </servlet-mapping>
+   
+   
+   <servlet>
+   <description></description>
+   <display-name>AddBatchController</display-name>
+   <servlet-name>AddBatchController</servlet-name>
+   <servlet-class>com.sofi.controller.AddBatchController</servlet-class>
+   </servlet>
+   
+   <servlet-mapping>
+   <servlet-name>AddBatchController</servlet-name>
+   <url-pattern>/AddBatchController</url-pattern>
+   <url-pattern>/AddBatch</url-pattern>
+   </servlet-mapping>
+   
+   <servlet>
+    <description></description>
+    <display-name>RegisterBatchController</display-name>
+    <servlet-name>RegisterBatchController</servlet-name>
+    <servlet-class>com.sofi.controller.RegisterBatchController</servlet-class>
+   
+   </servlet>
+   
+   <servlet-mapping>
+    <servlet-name>RegisterBatchController</servlet-name>
+    <url-pattern>/RegisterBatchController</url-pattern>
+    <url-pattern>/RegisterBatch</url-pattern>
+   
+   </servlet-mapping>
+   
+    
 </web-app>

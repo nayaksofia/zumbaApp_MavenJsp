@@ -2,48 +2,50 @@ package com.sofi.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import com.sofi.bean.ParticipantBatch;
 import com.sofi.db.DB;
-
-//Manages the relationship between participants and batches:many-to-many relationship
 
 public class ParticipantBatchDAO {
 	
-	Connection con;
-	
-
-	public ParticipantBatchDAO() {
-		con = DB.getDB().con;
-	}
-
-
-
-	//Insert 
-	public int addParticipantToBatch(ParticipantBatch pb) throws ClassNotFoundException, SQLException {
-	    
-		String sql = "insert into ParticipantBatch(pid, bid) values (?, ?)";
-
-	    try (PreparedStatement ps = con.prepareStatement(sql)) {
-	        ps.setInt(1, pb.getPid());
-	        ps.setInt(2, pb.getBid());
-
-	        return ps.executeUpdate();
+	public boolean isParticipantExists(int pid) {
+	    String query = "SELECT COUNT(*) FROM Participant WHERE pid = ?";
+	    try (    Connection conn = DB.getDB().getConnection();
+	    		PreparedStatement pst = conn.prepareStatement(query)) {
+	        pst.setInt(1, pid);
+	        ResultSet rs = pst.executeQuery();
+	        if (rs.next() && rs.getInt(1) > 0) {
+	            return true; // Participant exists
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
 	    }
+	    return false;
 	}
 
 	
-	//Retrieve All 
 	
-	
-	//Retrieve By Id
-	
-	
-	//Update by Id
-	
-	
-	//Delete
-	
-
+    public boolean registerParticipantForBatch(int pid, int bid) {
+    	
+    	 // Check if participant exists before attempting to register
+        if (!isParticipantExists(pid)) {
+            System.out.println("Registration failed: Participant with ID " + pid + " does not exist.");
+            return false;
+        }
+    	
+        try (Connection conn = DB.getDB().getConnection()) {
+            String sql = "INSERT INTO ParticipantBatch (pid, bid) VALUES (?, ?)";
+            
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setInt(1, pid);
+            pst.setInt(2, bid);
+            int rowsAffected = pst.executeUpdate();
+            
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
